@@ -109,7 +109,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
                 className="bg-blue-600 text-white p-4 rounded-xl text-center font-black uppercase tracking-widest text-xs"
               >
-                Contact James
+                Contact Today
               </Link>
             </div>
           </motion.div>
