@@ -4,6 +4,7 @@ import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { motion } from "framer-motion"; // THIS WAS MISSING
 import { Lock, Mail, ArrowRight, ShieldAlert, Fingerprint } from "lucide-react";
 
 export default function AdminLogin() {
@@ -30,11 +31,9 @@ export default function AdminLogin() {
 
   return (
     <main className="min-h-screen bg-white flex flex-col items-center justify-center px-6 relative overflow-hidden">
-      {/* Background Decorative Element */}
       <div className="absolute inset-0 neural-grid opacity-[0.03] -z-10" />
       
       <div className="w-full max-w-[440px]">
-        {/* Branding Header */}
         <div className="mb-12 flex flex-col items-center text-center">
           <div className="relative w-16 h-16 mb-8">
             <Image src={logoUrl} alt="JCR Group" fill className="object-contain" priority />
@@ -46,11 +45,8 @@ export default function AdminLogin() {
           <div className="h-[1px] w-12 bg-blue-600 mx-auto mb-4" />
         </div>
 
-        {/* The Login Terminal */}
         <div className="bg-white border border-slate-100 p-10 md:p-12 rounded-[3rem] shadow-[0_40px_80px_rgba(0,0,0,0.04)] relative">
           <form onSubmit={handleLogin} className="space-y-8">
-            
-            {/* Email Field */}
             <div className="space-y-2">
               <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Work Email</label>
               <div className="relative border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-2">
@@ -66,7 +62,6 @@ export default function AdminLogin() {
               </div>
             </div>
 
-            {/* Password Field */}
             <div className="space-y-2">
               <label className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Security Key</label>
               <div className="relative border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-2">
@@ -103,16 +98,9 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          {/* Floating Aesthetic Icon */}
           <div className="absolute -top-6 -right-6 w-12 h-12 bg-white border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 shadow-sm">
             <Fingerprint size={20} />
           </div>
-        </div>
-        
-        <div className="mt-12 text-center">
-          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">
-            Strictly Private Access Only
-          </p>
         </div>
       </div>
     </main>
