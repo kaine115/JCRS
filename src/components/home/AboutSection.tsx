@@ -1,111 +1,114 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
-import { Briefcase, Target, ShieldCheck, Zap } from 'lucide-react';
 
-const strategicPillars = [
-  "Executive Search & Leadership",
-  "High-Growth Team Scaling",
-  "Niche Technical Mandates",
-  "Strategic Talent Advisory",
-  "Retention & Culture Mapping"
-];
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { Briefcase, Code, Cpu, ArrowRight } from "lucide-react";
+
+const TECH_STACKS = [
+  "Full-Stack Engineering",
+  "DevOps & Infrastructure",
+  "Cloud Architecture",
+  "Data Engineering & AI",
+  "Cybersecurity Specialists",
+] as const;
 
 export default function AboutSection() {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % strategicPillars.length);
-    }, 3000);
+      setIndex((prev) => (prev + 1) % TECH_STACKS.length);
+    }, 4000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section id="about" className="py-32 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+    <section id="about" className="py-16 md:py-24 px-6 lg:px-12 max-w-7xl mx-auto bg-white">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
         
-        {/* LEFT SIDE: The Strategy Visual */}
+        {/* Technical Focus Visual */}
         <div className="lg:col-span-5 relative">
-          <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-2xl group">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="relative aspect-[4/5] rounded-3xl overflow-hidden group"
+          >
             <Image 
-              src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070" 
-              alt="JCR Strategic Recruitment"
+              src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070" 
+              alt="IT Recruitment Excellence"
               fill
-              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+              className="object-cover grayscale transition-transform duration-1000 group-hover:scale-105"
             />
-            {/* The Strategy Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent flex flex-col justify-end p-10">
-              <span className="text-blue-400 font-black text-[10px] uppercase tracking-[0.4em] mb-4">Strategic Specialism</span>
-              <div className="h-14 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex flex-col justify-end p-8 md:p-10">
+              <span className="text-blue-500 font-black text-[10px] uppercase tracking-[0.4em] mb-4">
+                Core Specialisms
+              </span>
+              <div className="h-10 overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.p
                     key={index}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -20, opacity: 0 }}
-                    className="text-2xl font-black text-white uppercase tracking-tighter leading-tight"
+                    className="text-lg md:text-xl font-black text-white uppercase tracking-tighter"
                   >
-                    {strategicPillars[index]}
+                    {TECH_STACKS[index]}
                   </motion.p>
                 </AnimatePresence>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* RIGHT SIDE: The Partnership Manifesto */}
-        <div className="lg:col-span-7 flex flex-col justify-center">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-[1px] w-12 bg-blue-600" />
-            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-600">The Recruitment Authority</span>
+        {/* The IT Recruitment Ledger */}
+        <div className="lg:col-span-7 flex flex-col pt-2">
+          <header className="mb-10">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-px w-8 bg-blue-600" />
+              <span className="text-[9px] font-black uppercase tracking-[0.5em] text-blue-600">
+                IT Recruitment Partners
+              </span>
+            </div>
+            <h2 className="text-[clamp(2.5rem,6vw,4.5rem)] font-black tracking-tighter leading-[0.9] text-slate-950 uppercase">
+              Scale Your <br />
+              <span className="text-slate-300 italic">Technical Edge.</span>
+            </h2>
+          </header>
+
+          {/* Clean Ledger Grid - No generic template boxes */}
+          <div className="flex flex-col border-t border-slate-100 mb-10">
+            <div className="grid grid-cols-1 md:grid-cols-12 py-8 md:py-10 border-b border-slate-100 gap-4 md:gap-8 items-start">
+              <div className="md:col-span-4 flex items-center gap-3 text-blue-600">
+                <Code size={18} strokeWidth={3} />
+                <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-950">Direct Search</h3>
+              </div>
+              <p className="md:col-span-8 text-slate-500 text-[12px] font-bold uppercase leading-relaxed tracking-tight">
+                We don't just post jobs; we headhunt the top 1% of IT talent. Our network includes vetted developers and architects who aren't on the open market.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 py-8 md:py-10 border-b border-slate-100 gap-4 md:gap-8 items-start">
+              <div className="md:col-span-4 flex items-center gap-3 text-blue-600">
+                <Cpu size={18} strokeWidth={3} />
+                <h3 className="text-[12px] font-black uppercase tracking-widest text-slate-950">Technical Vetting</h3>
+              </div>
+              <p className="md:col-span-8 text-slate-500 text-[12px] font-bold uppercase leading-relaxed tracking-tight">
+                Our recruiters speak your language. Every candidate undergoes rigorous technical screening to ensure they have the stack proficiency your project demands.
+              </p>
+            </div>
           </div>
 
-          <h2 className="text-5xl md:text-8xl font-black tracking-tighter mb-10 leading-[0.8] text-slate-950 uppercase">
-            WE ARCHITECT <br />
-            <span className="text-slate-300 italic">DOMINANT TEAMS.</span>
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-blue-600">
-                <Target size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Precision Search</span>
-              </div>
-              <p className="text-slate-600 text-sm font-bold leading-relaxed uppercase tracking-tight">
-                Beyond the CV. We execute precision-based headhunting for technical roles where standard recruitment fails. Our network is built on years of trust at the highest level.
-              </p>
+          {/* IT Performance Metric */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 py-8 px-8 md:px-12 bg-slate-50 rounded-2xl border border-slate-100">
+            <div>
+              <p className="text-4xl md:text-5xl font-black tracking-tighter text-slate-950 uppercase leading-none mb-1">Engineered</p>
+              <p className="text-[9px] uppercase font-black text-slate-400 tracking-[0.2em]">Talent Solutions for Tech Leaders</p>
             </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-blue-600">
-                <ShieldCheck size={18} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Mandate Integrity</span>
-              </div>
-              <p className="text-slate-600 text-sm font-bold leading-relaxed uppercase tracking-tight">
-                We operate as an extension of your board. Every placement is a strategic move designed to strengthen your technical culture and long-term delivery capabilities.
-              </p>
-            </div>
-
-            {/* Metrics Row */}
-            <div className="pt-8 border-t border-slate-100 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-blue-600 mb-1">
-                <Briefcase size={14} />
-                <span className="text-[9px] font-black uppercase tracking-widest">Client Success</span>
-              </div>
-              <p className="text-4xl font-black text-slate-950 tracking-tighter uppercase">Bespoke</p>
-              <p className="text-[9px] uppercase font-black text-slate-400 tracking-[0.2em] leading-tight">Tailored Engagement <br /> Frameworks</p>
-            </div>
-
-            <div className="pt-8 border-t border-slate-100 flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-blue-600 mb-1">
-                <Zap size={14} />
-                <span className="text-[9px] font-black uppercase tracking-widest">Global Reach</span>
-              </div>
-              <p className="text-4xl font-black text-slate-950 tracking-tighter uppercase">Unlimited</p>
-              <p className="text-[9px] uppercase font-black text-slate-400 tracking-[0.2em] leading-tight">Cross-Border <br /> Talent Mobility</p>
-            </div>
+            <button className="flex items-center gap-4 text-slate-950 hover:text-blue-600 transition-colors font-black text-[11px] uppercase tracking-widest group">
+              View Capabilities <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </div>

@@ -34,7 +34,7 @@ export default function AboutPage() {
                     who build.
                   </h1>
                   <p className="text-xl font-bold text-slate-500 max-w-xl leading-relaxed">
-                    JCR Solutions was started because the standard recruitment model is broken. Most agencies just spam LinkedIn; we actually know the market. We find the engineers and leaders that other firms can't reach, and we get them to the table.
+                    JCR Group was started because the standard recruitment model is broken. Most agencies just spam LinkedIn; we actually know the market. We find the engineers and leaders that other firms can't reach, and we get them to the table.
                   </p>
                 </motion.div>
               </div>
@@ -121,7 +121,7 @@ export default function AboutPage() {
                  <div className="bg-slate-950 rounded-[4rem] p-16 md:p-20 relative overflow-hidden text-white shadow-2xl">
                     <div className="absolute inset-0 neural-grid opacity-10"></div>
                     <div className="relative z-10">
-                       <h4 className="text-5xl font-black uppercase tracking-tighter mb-10 leading-none">Why use <br /> <span className="text-blue-500">JCR Solutions?</span></h4>
+                       <h4 className="text-5xl font-black uppercase tracking-tighter mb-10 leading-none">Why use <br /> <span className="text-blue-500">JCR Group?</span></h4>
                        <div className="space-y-8">
                          {[
                            { t: "Deep Networks", d: "We have spent years building relationships with the best in the industry.", i: <Fingerprint size={18} /> },
@@ -152,7 +152,7 @@ export default function AboutPage() {
                Stop Searching. <br /> Start <span className="text-slate-200 italic">Hiring.</span>
              </h2>
              <button className="bg-slate-950 text-white px-16 py-8 rounded-[2rem] font-black text-xs uppercase tracking-[0.4em] hover:bg-blue-600 transition-all shadow-2xl inline-flex items-center gap-4 group">
-               Contact James Directly <ArrowUpRight size={20} />
+               Contact Us <ArrowUpRight size={20} />
              </button>
           </section>
 

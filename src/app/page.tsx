@@ -18,9 +18,9 @@ export default function HomePage() {
       
       {/* Content flow with depth */}
       <div className="relative z-10">
-        <StatsBar />
-        <AboutSection />
         
+        <AboutSection />
+        <StatsBar />
         {/* The New Surgical Quadrant */}
         <GlobalReach />
         

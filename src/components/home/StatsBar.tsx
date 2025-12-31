@@ -1,57 +1,44 @@
 "use client";
-import { motion, useMotionValue, useSpring, useInView } from "framer-motion";
-import { useEffect, useRef } from "react";
 
-function Counter({ value }: { value: number }) {
-  const ref = useRef(null);
-  const motionValue = useMotionValue(0);
-  const springValue = useSpring(motionValue, { damping: 40, stiffness: 80 });
-  const isInView = useInView(ref, { once: true });
-
-  useEffect(() => {
-    if (isInView) motionValue.set(value);
-  }, [isInView, value, motionValue]);
-
-  useEffect(() => {
-    springValue.on("change", (latest) => {
-      if (ref.current) {
-        (ref.current as HTMLElement).textContent = Math.floor(latest).toLocaleString();
-      }
-    });
-  }, [springValue]);
-
-  return <span ref={ref}>0</span>;
-}
+import React from "react";
+import { MessageSquare, ArrowRight } from "lucide-react";
 
 export default function StatsBar() {
-  const stats = [
-    { label: 'Engineering Mandates', value: 1200, suffix: '+' },
-    { label: 'Verification Accuracy', value: 99, suffix: '%' },
-    { label: 'Success Rate', value: 94, suffix: '%' },
-    { label: 'Years Experience', value: 15, suffix: 'yr' },
-  ];
-
   return (
-    <section className="bg-slate-950 py-24 border-y border-white/5 relative">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-12">
-        {stats.map((stat, i) => (
-          <motion.div 
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            viewport={{ once: true }}
-            className="text-center lg:text-left"
-          >
-            <div className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-2">
-              <Counter value={stat.value} />{stat.suffix}
+    /* mt-16 and pb-[75px] maintain the strict vertical rhythm required for the site layout */
+    <div className="mt-16 pb-[75px] w-full max-w-7xl mx-auto px-6">
+      <div className="flex flex-col md:flex-row items-stretch justify-between bg-slate-950 rounded-[2rem] overflow-hidden border border-white/5 shadow-2xl">
+        
+        {/* Business Inquiry Side */}
+        <div className="flex-1 p-8 md:p-12 border-b md:border-b-0 md:border-r border-white/10">
+          <div className="flex items-center gap-2 mb-4 text-blue-500">
+            <MessageSquare size={14} />
+            <span className="text-[9px] font-black uppercase tracking-[0.3em]">Client Services</span>
+          </div>
+          
+          {/* text-[8vw] used here to ensure the longer sentence doesn't break mobile bounds */}
+          <p className="text-[8vw] md:text-5xl font-black tracking-tighter text-white uppercase leading-[0.9] mb-4">
+            Are you a business <br /> 
+            <span className="text-blue-600">looking for top talent?</span>
+          </p>
+          
+          <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.2em] leading-tight">
+            Reach out to our specialist team today <br /> to scale your engineering capacity.
+          </p>
+        </div>
+
+        {/* Action Side: Contact Trigger */}
+        <div className="flex items-center justify-center p-8 md:p-12 bg-white/5 group cursor-pointer hover:bg-blue-600 transition-all duration-500">
+          <button className="flex flex-col items-start gap-2 w-full md:w-auto">
+            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/50">Get Started</span>
+            <div className="flex items-center justify-between w-full gap-12 text-white">
+              <span className="text-xl font-black uppercase tracking-tight whitespace-nowrap">Contact Now</span>
+              <ArrowRight size={22} className="group-hover:translate-x-2 transition-transform duration-500" />
             </div>
-            <div className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">
-              {stat.label}
-            </div>
-          </motion.div>
-        ))}
+          </button>
+        </div>
+
       </div>
-    </section>
+    </div>
   );
 }

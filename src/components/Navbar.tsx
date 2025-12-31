@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,6 +12,9 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  // Pages that have a white background at the very top
+  const isWhitePage = pathname !== "/";
+
   const logoUrl = "https://i.ibb.co/SbMB2rj/Chat-GPT-Image-Dec-30-2025-11-51-22-PM-removebg-preview.png";
 
   useEffect(() => {
@@ -18,6 +22,9 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Determine if the navbar should show the "Dark Text / White Bg" style
+  const showSolidState = scrolled || isWhitePage;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -27,71 +34,79 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed top-8 left-0 right-0 z-[100] px-6">
-      <div className="max-w-fit mx-auto">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className={`
-            relative flex items-center gap-8 px-6 py-3 rounded-full transition-all duration-500
-            ${scrolled 
-              ? "bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.3)]" 
-              : "bg-white/10 backdrop-blur-md border border-white/5 shadow-xl"
-            }
-          `}
-        >
-          {/* Logo - Replaced Text with your Image Link */}
-          <Link href="/" className="flex items-center mr-2">
-            <div className="relative w-10 h-10 overflow-hidden">
-              <Image 
-                src={logoUrl} 
-                alt="JCR Group" 
-                fill 
-                className={`object-contain transition-all duration-500 ${scrolled ? "brightness-0 invert" : ""}`}
-              />
-            </div>
-          </Link>
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
+        showSolidState 
+          ? "py-4 bg-white/90 backdrop-blur-xl border-b border-slate-100 shadow-sm" 
+          : "py-8 bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+        
+        {/* Logo - Inverts based on background color */}
+        <Link href="/" className="flex items-center">
+          <div className="relative w-10 h-10 overflow-hidden">
+            <Image 
+              src={logoUrl} 
+              alt="JCR Group" 
+              fill 
+              className={`object-contain transition-all duration-500 ${
+                showSolidState ? "brightness-0" : "brightness-0 invert"
+              }`}
+            />
+          </div>
+        </Link>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-8">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-12">
+          <div className="flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-[9px] font-black uppercase tracking-widest transition-colors ${
+                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 relative group ${
                   pathname === link.href 
-                    ? "text-blue-500" 
-                    : scrolled ? "text-slate-400 hover:text-white" : "text-slate-500 hover:text-slate-950"
+                    ? "text-blue-600" 
+                    : showSolidState ? "text-slate-950/60 hover:text-slate-950" : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.name}
+                <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full ${pathname === link.href ? "w-full" : ""}`} />
               </Link>
             ))}
           </div>
 
           {/* Contact Button */}
-          <Link href="/contact" className="hidden md:flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-slate-950 transition-all group">
-            Contact <ArrowUpRight size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </Link>
-
-          {/* Mobile Toggle */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className={`md:hidden p-2 ${scrolled ? "text-white" : "text-slate-950"}`}
+          <Link 
+            href="/contact" 
+            className={`flex items-center gap-3 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 group shadow-lg ${
+              showSolidState 
+                ? "bg-slate-950 text-white hover:bg-blue-600 shadow-slate-950/10" 
+                : "bg-blue-600 text-white hover:bg-white hover:text-slate-950 shadow-blue-600/20"
+            }`}
           >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </motion.div>
+            Contact Now 
+            <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
+        </div>
+
+        {/* Mobile Toggle */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className={`md:hidden p-2 transition-colors ${showSolidState ? "text-slate-950" : "text-white"}`}
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="absolute top-24 left-6 right-6 bg-slate-950 rounded-[2rem] p-8 border border-white/10 shadow-2xl md:hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-full left-0 right-0 bg-slate-950 border-b border-white/10 p-8 flex flex-col gap-8 md:hidden shadow-2xl"
           >
             <div className="flex flex-col gap-6">
               {navLinks.map((link) => (
@@ -99,19 +114,21 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-xl font-black text-white uppercase tracking-tighter"
+                  className={`text-2xl font-black uppercase tracking-tighter transition-colors ${
+                    pathname === link.href ? "text-blue-500" : "text-white"
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
-              <Link
-                href="/contact"
-                onClick={() => setIsOpen(false)}
-                className="bg-blue-600 text-white p-4 rounded-xl text-center font-black uppercase tracking-widest text-xs"
-              >
-                Contact Today
-              </Link>
             </div>
+            <Link
+              href="/contact"
+              onClick={() => setIsOpen(false)}
+              className="bg-blue-600 text-white py-5 rounded-2xl text-center font-black uppercase tracking-widest text-xs"
+            >
+              Contact Today
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>

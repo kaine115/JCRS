@@ -5,7 +5,8 @@ import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc, query, orderBy 
 import { useRouter } from "next/navigation";
 import { 
   Plus, Trash2, LogOut, MapPin, X, ShieldCheck, 
-  Briefcase, Zap, Edit3, Save, Layout, Search, Users, ClipboardList
+  Briefcase, Zap, Edit3, Save, Layout, Search, Users, ClipboardList,
+  Building2, Banknote, History, GraduationCap, Sparkles, Globe, Laptop, Layers
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -17,11 +18,27 @@ export default function AdminDashboard() {
   const [techInput, setTechInput] = useState("");
   const [techTags, setTechTags] = useState<string[]>([]);
 
+  // 10 Key IT Recruitment Sectors
+  const sectors = [
+    "Software Engineering",
+    "Quantitative Trading",
+    "Cyber Security",
+    "Data Science & AI",
+    "Cloud & Infrastructure",
+    "DevOps & SRE",
+    "Blockchain & Web3",
+    "Product Management",
+    "Mobile Development",
+    "ERP & CRM (SAP/Salesforce)"
+  ];
+
   const [formData, setFormData] = useState({
-    title: "", firm: "", location: "", category: "Software",
+    title: "", firm: "", location: "", category: sectors[0],
     salaryMin: "", salaryMax: "", bonus: "", equity: "",
     universityReq: "", certifications: "", securityClearance: "None",
-    experienceYears: "", description: ""
+    experienceYears: "", description: "", benefits: "",
+    employmentType: "Permanent", seniority: "Senior",
+    isRemote: false, isHybrid: false
   });
 
   useEffect(() => {
@@ -39,14 +56,33 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
+  const processTags = (input: string) => {
+    const newTags = input
+      .split(/[,\n\s]+/)
+      .map(tag => tag.trim().toUpperCase())
+      .filter(tag => tag.length > 0 && !techTags.includes(tag));
+    
+    if (newTags.length > 0) {
+      setTechTags([...techTags, ...newTags]);
+      setTechInput("");
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text');
+    processTags(pastedData);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = { ...formData, techStack: techTags, updatedAt: new Date().toISOString() };
       if (editingId) {
-        await updateDoc(doc(db, "mandates", editingId), { ...formData, techStack: techTags });
+        await updateDoc(doc(db, "mandates", editingId), payload);
         setEditingId(null);
       } else {
-        await addDoc(collection(db, "mandates"), { ...formData, techStack: techTags, createdAt: new Date().toISOString() });
+        await addDoc(collection(db, "mandates"), { ...payload, createdAt: new Date().toISOString() });
       }
       resetForm();
       fetchJobs();
@@ -64,167 +100,269 @@ export default function AdminDashboard() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ title: "", firm: "", location: "", category: "Software", salaryMin: "", salaryMax: "", bonus: "", equity: "", universityReq: "", certifications: "", securityClearance: "None", experienceYears: "", description: "" });
+    setFormData({ 
+      title: "", firm: "", location: "", category: sectors[0], 
+      salaryMin: "", salaryMax: "", bonus: "", equity: "", 
+      universityReq: "", certifications: "", securityClearance: "None", 
+      experienceYears: "", description: "", benefits: "",
+      employmentType: "Permanent", seniority: "Senior",
+      isRemote: false, isHybrid: false
+    });
     setTechTags([]);
   };
 
   return (
-    <main className="min-h-screen bg-white pt-32 pb-20 px-6 font-sans">
+    <main className="min-h-screen bg-slate-50 pt-24 pb-20 px-6 font-sans antialiased text-slate-900">
       <div className="max-w-7xl mx-auto">
         
-        {/* Header Section */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <span className="w-8 h-[1px] bg-blue-600"></span>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">JCR Group Management</p>
+        <header className="flex flex-col md:flex-row justify-between items-center mb-12 py-6 border-b border-slate-200">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-200">
+              <Briefcase size={24} />
             </div>
-            <h1 className="text-5xl font-black uppercase tracking-tighter text-slate-950">
-              Active <span className="text-slate-200">Mandates</span>
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Role Management</h1>
+              <p className="text-sm text-slate-500 font-medium">Create and manage active hiring roles</p>
+            </div>
           </div>
           <button 
             onClick={() => auth.signOut()} 
-            className="flex items-center gap-3 px-8 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
           >
-            End Session <LogOut size={14}/>
+            Sign Out <LogOut size={16} />
           </button>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* LEFT: FORM PANEL */}
           <div className="lg:col-span-8">
-            <div className="bg-slate-50/50 rounded-[3rem] border border-slate-100 p-10 md:p-12 shadow-sm">
-              <div className="flex items-center gap-4 mb-12">
-                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
-                  {editingId ? <Edit3 size={18}/> : <Plus size={18}/>}
-                </div>
-                <h2 className="text-xl font-black uppercase tracking-tighter text-slate-950">
-                  {editingId ? "Modify Brief" : "Create New Mandate"}
-                </h2>
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                <h2 className="text-lg font-bold mb-8">Role Details</h2>
 
-              <form onSubmit={handleSubmit} className="space-y-12">
-                
-                {/* Section: Basic Details */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Position Title</label>
-                    <input type="text" className="admin-input-clean" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required placeholder="e.g. Lead Engineer" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="md:col-span-2">
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Job Title</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                      value={formData.title} 
+                      onChange={e => setFormData({...formData, title: e.target.value})} 
+                      required 
+                      placeholder="e.g. Lead Software Engineer" 
+                    />
                   </div>
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Hiring Firm</label>
-                    <input type="text" className="admin-input-clean" value={formData.firm} onChange={e => setFormData({...formData, firm: e.target.value})} required placeholder="e.g. Tier-1 FinTech" />
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Company Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                      value={formData.firm} 
+                      onChange={e => setFormData({...formData, firm: e.target.value})} 
+                      required 
+                      placeholder="Hiring Firm" 
+                    />
                   </div>
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Location</label>
-                    <input type="text" className="admin-input-clean" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} required placeholder="e.g. London / Remote" />
+
+                  {/* SECTOR CATEGORY SELECT */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Sector / Category</label>
+                    <div className="relative">
+                      <select 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
+                        value={formData.category} 
+                        onChange={e => setFormData({...formData, category: e.target.value})}
+                      >
+                        {sectors.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                      <Layers className="absolute right-4 top-3.5 text-slate-400 pointer-events-none" size={16} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Base Location</label>
+                    <div className="relative">
+                      <MapPin className="absolute left-4 top-3.5 text-slate-400" size={16} />
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        value={formData.location} 
+                        onChange={e => setFormData({...formData, location: e.target.value})} 
+                        required 
+                        placeholder="e.g. London, UK" 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="checkbox" 
+                        className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        checked={formData.isRemote}
+                        onChange={e => setFormData({...formData, isRemote: e.target.checked})}
+                      />
+                      <span className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <Globe size={14} className="text-slate-400" /> Remote
+                      </span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <input 
+                        type="checkbox" 
+                        className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                        checked={formData.isHybrid}
+                        onChange={e => setFormData({...formData, isHybrid: e.target.checked})}
+                      />
+                      <span className="flex items-center gap-2 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <Laptop size={14} className="text-slate-400" /> Hybrid
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Min Salary (£)</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        value={formData.salaryMin} 
+                        onChange={e => setFormData({...formData, salaryMin: e.target.value})} 
+                        placeholder="100000" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Max Salary (£)</label>
+                      <input 
+                        type="text" 
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        value={formData.salaryMax} 
+                        onChange={e => setFormData({...formData, salaryMax: e.target.value})} 
+                        placeholder="150000" 
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Employment Type</label>
+                    <select 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
+                      value={formData.employmentType} 
+                      onChange={e => setFormData({...formData, employmentType: e.target.value})}
+                    >
+                      <option value="Permanent">Permanent</option>
+                      <option value="Contract">Contract</option>
+                    </select>
                   </div>
                 </div>
 
-                {/* Section: Remuneration */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Min Base (£)</label>
-                    <input type="text" className="admin-input-clean" value={formData.salaryMin} onChange={e => setFormData({...formData, salaryMin: e.target.value})} />
-                  </div>
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Max Base (£)</label>
-                    <input type="text" className="admin-input-clean" value={formData.salaryMax} onChange={e => setFormData({...formData, salaryMax: e.target.value})} />
-                  </div>
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Bonus %</label>
-                    <input type="text" className="admin-input-clean" value={formData.bonus} onChange={e => setFormData({...formData, bonus: e.target.value})} />
-                  </div>
-                  <div className="border-b border-slate-200 focus-within:border-blue-600 transition-colors pb-3">
-                    <label className="admin-label">Equity</label>
-                    <input type="text" className="admin-input-clean" value={formData.equity} onChange={e => setFormData({...formData, equity: e.target.value})} />
-                  </div>
-                </div>
-
-                {/* Section: Technical Stack */}
-                <div className="space-y-4">
-                  <label className="admin-label">Requirements / Stack (Press Enter)</label>
-                  <div className="flex flex-wrap gap-2 min-h-[50px]">
+                <div className="mt-8">
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Skills / Tech Stack (Paste or Enter)</label>
+                  <div className="flex flex-wrap gap-2 mb-3">
                     {techTags.map((t, i) => (
-                      <span key={i} className="bg-slate-950 text-white text-[9px] font-black px-4 py-2 rounded-full flex items-center gap-2 uppercase tracking-widest">
-                        {t} <X size={10} className="cursor-pointer hover:text-red-400" onClick={() => setTechTags(techTags.filter((_, idx) => idx !== i))}/>
+                      <span key={i} className="bg-blue-50 text-blue-700 text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-2 border border-blue-100">
+                        {t} 
+                        <X size={12} className="cursor-pointer hover:text-blue-900" onClick={() => setTechTags(techTags.filter((_, idx) => idx !== i))} />
                       </span>
                     ))}
-                    <input 
-                      className="flex-1 bg-transparent outline-none text-[11px] font-bold uppercase tracking-widest p-2 border-b border-slate-200 focus:border-blue-600" 
-                      value={techInput} 
-                      onChange={e => setTechInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          if (techInput.trim() && !techTags.includes(techInput.trim().toUpperCase())) {
-                            setTechTags([...techTags, techInput.trim().toUpperCase()]);
-                            setTechInput("");
-                          }
-                        }
-                      }}
-                      placeholder="Add Tech/Skill..." 
+                  </div>
+                  <input 
+                    type="text"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                    value={techInput} 
+                    onChange={e => setTechInput(e.target.value)}
+                    onPaste={handlePaste}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        processTags(techInput);
+                      }
+                    }}
+                    placeholder="Python, React, AWS..." 
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Role Description</label>
+                    <textarea 
+                      rows={8} 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium leading-relaxed focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"
+                      value={formData.description} 
+                      onChange={e => setFormData({...formData, description: e.target.value})} 
+                      required 
+                      placeholder="Describe the role requirements and daily responsibilities..." 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Benefits & Perks</label>
+                    <textarea 
+                      rows={4} 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium leading-relaxed focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"
+                      value={formData.benefits} 
+                      onChange={e => setFormData({...formData, benefits: e.target.value})} 
+                      placeholder="Bonus, Equity, Healthcare, etc." 
                     />
                   </div>
                 </div>
 
-                {/* Section: Full Description */}
-                <div className="space-y-4">
-                  <label className="admin-label">Full Mandate Briefing</label>
-                  <textarea rows={10} className="w-full bg-white border border-slate-200 rounded-[2rem] p-8 text-sm font-medium leading-relaxed outline-none focus:border-blue-600 transition-colors resize-none shadow-sm" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required placeholder="Enter full role details and context..." />
-                </div>
-
-                <div className="flex gap-4 pt-6">
-                  <button type="submit" className="flex-1 py-6 bg-slate-950 text-white rounded-[2rem] font-black uppercase text-[10px] tracking-[0.4em] hover:bg-blue-600 transition-all shadow-xl shadow-slate-950/10">
-                    {editingId ? 'Update Live Brief' : 'Publish Mandate'}
+                <div className="flex gap-4 mt-8">
+                  <button 
+                    type="submit" 
+                    className="flex-1 bg-slate-950 text-white py-4 rounded-xl font-bold text-sm hover:bg-blue-600 transition-all shadow-lg shadow-slate-200"
+                  >
+                    {editingId ? 'Update Role' : 'Publish Role'}
                   </button>
                   {editingId && (
-                    <button type="button" onClick={resetForm} className="px-10 py-6 bg-white border border-slate-200 text-slate-400 rounded-[2rem] font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all">
+                    <button 
+                      type="button" 
+                      onClick={resetForm} 
+                      className="px-8 py-4 border border-slate-200 text-slate-500 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all"
+                    >
                       Cancel
                     </button>
                   )}
                 </div>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
 
-          {/* RIGHT: INVENTORY LIST */}
           <div className="lg:col-span-4">
-            <div className="sticky top-32 space-y-8">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 flex items-center gap-2">
-                  <ClipboardList size={14}/> Live Mandates ({jobs.length})
+            <div className="sticky top-24 space-y-4">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <ClipboardList size={16} /> Active Roles ({jobs.length})
                 </h3>
               </div>
               
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
                 {jobs.map(job => (
-                  <div key={job.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 hover:border-blue-600 hover:shadow-2xl hover:shadow-slate-200/50 transition-all group">
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="flex-1">
-                        <h4 className="text-sm font-black uppercase text-slate-950 leading-tight mb-2 tracking-tighter">{job.title}</h4>
-                        <div className="flex flex-col gap-1">
-                           <div className="flex items-center gap-2">
-                              <span className="w-4 h-[1px] bg-blue-600"></span>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{job.firm}</p>
-                           </div>
-                           <div className="flex items-center gap-1.5 text-slate-300 ml-6">
-                              <MapPin size={10} />
-                              <p className="text-[9px] font-black uppercase tracking-widest">{job.location || 'N/A'}</p>
-                           </div>
+                  <div key={job.id} className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-blue-500 hover:shadow-xl transition-all group">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">{job.firm}</p>
+                        <h4 className="text-sm font-bold text-slate-900 mb-2 leading-snug">{job.title}</h4>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 italic">{job.category}</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                          <span className="text-[10px] font-semibold text-slate-400 flex items-center gap-1">
+                            <MapPin size={12} /> {job.location}
+                          </span>
+                          {(job.isRemote || job.isHybrid) && (
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase">
+                              {job.isRemote ? 'Remote' : 'Hybrid'}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => startEdit(job)} className="p-3 text-slate-400 hover:text-blue-600 transition-colors"><Edit3 size={16}/></button>
-                        <button onClick={() => { if(confirm("Permanently delete this mandate?")) deleteDoc(doc(db, "mandates", job.id)).then(fetchJobs) }} className="p-3 text-slate-400 hover:text-red-600 transition-colors"><Trash2 size={16}/></button>
+                        <button onClick={() => startEdit(job)} className="p-2 text-slate-400 hover:text-blue-600 transition-all"><Edit3 size={16}/></button>
+                        <button onClick={() => { if(confirm("Delete?")) deleteDoc(doc(db, "mandates", job.id)).then(fetchJobs) }} className="p-2 text-slate-400 hover:text-red-600 transition-all"><Trash2 size={16}/></button>
                       </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                       {job.techStack?.slice(0, 4).map((t: string, i: number) => (
-                         <span key={i} className="text-[8px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-md uppercase tracking-tighter">#{t}</span>
-                       ))}
                     </div>
                   </div>
                 ))}
@@ -233,17 +371,6 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .admin-input-clean { 
-          @apply w-full bg-transparent py-2 text-sm font-bold uppercase tracking-widest text-slate-950 outline-none placeholder:text-slate-200;
-        }
-        .admin-label { 
-          @apply text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 block mb-1;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-      `}</style>
     </main>
   );
 }

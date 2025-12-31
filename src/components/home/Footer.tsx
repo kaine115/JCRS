@@ -8,43 +8,57 @@ export default function Footer() {
   const kmLogo = "https://i.ibb.co/C3JZSmTX/Background-2.png";
 
   return (
-    <footer className="bg-slate-950 text-white pt-32 pb-12 px-6 border-t border-white/5">
+    <footer className="bg-slate-950 text-white pt-24 md:pt-32 pb-12 px-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 mb-24">
+        {/* Fixed: items-start on mobile prevents the "shoved right" look */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-24">
           
           {/* Contact Details */}
-          <div>
-            <span className="text-blue-500 font-black text-[10px] uppercase tracking-[0.4em] mb-4 block">CONTACT</span>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-12 uppercase">
+          <div className="flex flex-col items-start">
+            <span className="text-blue-500 font-black text-[10px] uppercase tracking-[0.4em] mb-4 block">Contact</span>
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-8 md:mb-12 uppercase leading-[0.9]">
               Let’s Work <br /> Together
             </h2>
             
             <div className="space-y-4 mb-12">
-              <a href="mailto:James@jcr-solutions.com" className="text-2xl font-bold hover:text-blue-500 transition-colors block">
+              <a href="mailto:James@jcr-solutions.com" className="text-xl md:text-2xl font-bold hover:text-blue-500 transition-colors block break-all">
                 James@jcr-solutions.com
               </a>
-              <a href="tel:+447972842676" className="text-2xl font-bold hover:text-blue-500 transition-colors block">
-                Tel: +44 7972 842 676
+              <a href="tel:+447972842676" className="text-xl md:text-2xl font-bold hover:text-blue-500 transition-colors block">
+                +44 7972 842 676
               </a>
             </div>
 
             <div className="flex gap-6">
-              {[Twitter, Linkedin, Facebook].map((Icon, i) => (
-                <a key={i} href="#" className="text-slate-500 hover:text-white transition-colors">
-                  <Icon size={20} />
+              {[
+                { Icon: Linkedin, href: "#" },
+                { Icon: Twitter, href: "#" },
+                { Icon: Facebook, href: "#" }
+              ].map((social, i) => (
+                <a key={i} href={social.href} className="text-slate-500 hover:text-white transition-colors">
+                  <social.Icon size={20} />
                 </a>
               ))}
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white/5 p-10 rounded-[2.5rem] border border-white/10 relative overflow-hidden">
+          <div className="bg-white/5 p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] border border-white/10 relative overflow-hidden">
             <form className="space-y-6">
-              <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-white/10 pb-4 text-[10px] font-bold tracking-widest focus:border-blue-500 outline-none uppercase" />
-              <input type="email" placeholder="EMAIL" className="w-full bg-transparent border-b border-white/10 pb-4 text-[10px] font-bold tracking-widest focus:border-blue-500 outline-none uppercase" />
-              <textarea rows={3} placeholder="LEAVE A MESSAGE" className="w-full bg-transparent border-b border-white/10 pb-4 text-[10px] font-bold tracking-widest focus:border-blue-500 outline-none uppercase resize-none" />
-              <button className="flex items-center gap-3 text-blue-500 font-black text-[10px] uppercase tracking-widest hover:text-white transition-colors group">
-                SUBMIT ENQUIRY <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Full Name</label>
+                <input type="text" placeholder="NAME" className="w-full bg-transparent border-b border-white/10 pb-4 text-[10px] font-bold tracking-widest focus:border-blue-500 outline-none uppercase placeholder:text-slate-700" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Email Address</label>
+                <input type="email" placeholder="EMAIL" className="w-full bg-transparent border-b border-white/10 pb-4 text-[10px] font-bold tracking-widest focus:border-blue-500 outline-none uppercase placeholder:text-slate-700" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Message</label>
+                <textarea rows={3} placeholder="HOW CAN WE HELP?" className="w-full bg-transparent border-b border-white/10 pb-4 text-[10px] font-bold tracking-widest focus:border-blue-500 outline-none uppercase resize-none placeholder:text-slate-700" />
+              </div>
+              <button className="flex items-center gap-3 text-blue-500 font-black text-[10px] uppercase tracking-widest hover:text-white transition-colors group pt-4">
+                Submit Enquiry <Send size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>
             </form>
           </div>
@@ -57,8 +71,8 @@ export default function Footer() {
              <span className="text-[9px] font-black text-slate-700 uppercase tracking-[0.4em]">© 2026 JCR SOLUTIONS LTD</span>
            </div>
 
-           {/* Ultra-subtle KM Digital Signature */}
            <div className="flex items-center gap-3 opacity-30 hover:opacity-100 transition-opacity">
+             <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Created by</span>
              <Link href="https://kmdigital.co.uk/" target="_blank">
                <Image 
                  src={kmLogo} 
